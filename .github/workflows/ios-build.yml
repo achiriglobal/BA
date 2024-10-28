@@ -25,7 +25,10 @@ jobs:
         run: npm install
 
       - name: Build App
-        run: npm run build
+        run: |
+          export NODE_OPTIONS=--openssl-legacy-provider
+          npm run build
+
 
       - name: Install Capacitor iOS
         run: npx cap sync ios
