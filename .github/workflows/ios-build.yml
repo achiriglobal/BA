@@ -39,16 +39,15 @@ jobs:
       - name: Archive the iOS app (without signing)
         run: |
           xcodebuild archive \
-            -workspace ios/App/App.xcworkspace \
-            -scheme App \
-            -configuration Release \
-            -archivePath ./build/App.xcarchive \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_IDENTITY="" \
-            PROVISIONING_PROFILE_SPECIFIER="" \
-            DEVELOPMENT_TEAM="" \
-            -quiet \
-            -disableParallelization
+          -workspace ios/App/App.xcworkspace \
+          -scheme App \
+          -configuration Release \
+          -archivePath ./build/App.xcarchive \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGNING_IDENTITY="" \
+          PROVISIONING_PROFILE_SPECIFIER="" \
+          DEVELOPMENT_TEAM="" \
+          -quiet
 
       - name: Create exportOptions.plist
         run: |
