@@ -46,7 +46,7 @@ jobs:
           CODE_SIGNING_ALLOWED=NO \
           CODE_SIGN_IDENTITY="" \
           PROVISIONING_PROFILE_SPECIFIER="Automatic" \
-          DEVELOPMENT_TEAM="XXXXXX"  # Replace "YOUR_TEAM_ID" with your actual team ID
+          DEVELOPMENT_TEAM="XXXXXXXXXX"  # Replace "YOUR_TEAM_ID" with your actual team ID
 
       - name: Export IPA
         run: |
