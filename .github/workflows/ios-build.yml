@@ -51,13 +51,11 @@ jobs:
           echo '<plist version="1.0">' >> ios/App/exportOptions.plist
           echo '<dict>' >> ios/App/exportOptions.plist
           echo '  <key>method</key>' >> ios/App/exportOptions.plist
-          echo '  <string>ad-hoc</string>' >> ios/App/exportOptions.plist
+          echo '  <string>development</string>' >> ios/App/exportOptions.plist
           echo '  <key>signingStyle</key>' >> ios/App/exportOptions.plist
           echo '  <string>manual</string>' >> ios/App/exportOptions.plist
-          echo '  <key>signingCertificate</key>' >> ios/App/exportOptions.plist
-          echo '  <string></string>' >> ios/App/exportOptions.plist
           echo '  <key>teamID</key>' >> ios/App/exportOptions.plist
-          echo '  <string></string>' >> ios/App/exportOptions.plist
+          echo '  <string>XXXXXXXXXX</string>' >> ios/App/exportOptions.plist
           echo '</dict>' >> ios/App/exportOptions.plist
           echo '</plist>' >> ios/App/exportOptions.plist
 
