@@ -32,6 +32,10 @@ jobs:
       - name: Install Capacitor iOS
         run: npx cap sync ios
 
+      - name: Clean Build Directory
+        run: |
+          rm -rf ./build
+
       - name: Archive the iOS app (without signing)
         run: |
           xcodebuild archive \
@@ -51,7 +55,7 @@ jobs:
           echo '<plist version="1.0">' >> ios/App/exportOptions.plist
           echo '<dict>' >> ios/App/exportOptions.plist
           echo '  <key>method</key>' >> ios/App/exportOptions.plist
-          echo '  <string>development</string>' >> ios/App/exportOptions.plist
+          echo '  <string>release-testing</string>' >> ios/App/exportOptions.plist
           echo '  <key>signingStyle</key>' >> ios/App/exportOptions.plist
           echo '  <string>manual</string>' >> ios/App/exportOptions.plist
           echo '  <key>teamID</key>' >> ios/App/exportOptions.plist
