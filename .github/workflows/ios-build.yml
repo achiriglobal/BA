@@ -45,16 +45,14 @@ jobs:
           DEVELOPMENT_TEAM="" \
           -quiet
 
+
       - name: Export IPA
         run: |
           xcodebuild -exportArchive \
           -archivePath ./build/App.xcarchive \
           -exportPath ./build \
           -exportOptionsPlist ios/App/exportOptions.plist \
-          CODE_SIGNING_ALLOWED=NO \
-          CODE_SIGNING_IDENTITY="" \
-          PROVISIONING_PROFILE_SPECIFIER=""
-
+          -quiet
 
       - name: List Build Directory
         run: ls -al ./build
