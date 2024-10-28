@@ -27,21 +27,43 @@ jobs:
       - name: Build App
         run: |
           export NODE_OPTIONS=--openssl-legacy-provider
-          DISABLE_ESLINT_PLUGIN=true npm run build         
-
+          DISABLE_ESLINT_PLUGIN=true npm run build
 
       - name: Install Capacitor iOS
         run: npx cap sync ios
 
-      - name: Build iOS App
-        run: xcodebuild archive -workspace ios/App/App.xcworkspace -scheme App -configuration Release -archivePath ./build/App.xcarchive
+      - name: Archive the iOS app (without signing)
+        run: |
+          xcodebuild archive \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -archivePath ./build/App.xcarchive \
+            CODE_SIGNING_ALLOWED=NO
 
-      - name: Export IPA
-        run: xcodebuild -exportArchive -archivePath ./build/App.xcarchive -exportPath ./build -exportOptionsPlist ios/App/exportOptions.plist
-        env:
-          DEVELOPMENT_TEAM: ""
-          CODE_SIGN_IDENTITY: ""
-          PROVISIONING_PROFILE: ""
+      - name: Create exportOptions.plist
+        run: |
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > ios/App/exportOptions.plist
+          echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> ios/App/exportOptions.plist
+          echo '<plist version="1.0">' >> ios/App/exportOptions.plist
+          echo '<dict>' >> ios/App/exportOptions.plist
+          echo '  <key>method</key>' >> ios/App/exportOptions.plist
+          echo '  <string>development</string>' >> ios/App/exportOptions.plist
+          echo '  <key>signingStyle</key>' >> ios/App/exportOptions.plist
+          echo '  <string>automatic</string>' >> ios/App/exportOptions.plist
+          echo '  <key>stripSwiftSymbols</key>' >> ios/App/exportOptions.plist
+          echo '  <true/>' >> ios/App/exportOptions.plist
+          echo '  <key>thinning</key>' >> ios/App/exportOptions.plist
+          echo '  <string>&lt;none&gt;</string>' >> ios/App/exportOptions.plist
+          echo '</dict>' >> ios/App/exportOptions.plist
+          echo '</plist>' >> ios/App/exportOptions.plist
+
+      - name: Export the IPA (unsigned)
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath ./build/App.xcarchive \
+            -exportPath ./build \
+            -exportOptionsPlist ios/App/exportOptions.plist
 
       - name: Upload IPA to Appetize.io
         run: |
@@ -49,5 +71,4 @@ jobs:
           -F "file=@./build/App.ipa" \
           -F "platform=ios" \
           -F "token=$APPETIZE_API_TOKEN" \
-          -F "note=BlackApp iOS build"
-
+          -F "note=BlackApp iOS Build"
