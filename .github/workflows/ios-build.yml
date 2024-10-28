@@ -27,8 +27,7 @@ jobs:
       - name: Build App
         run: |
           export NODE_OPTIONS=--openssl-legacy-provider
-          DISABLE_ESLINT_PLUGIN=true npm run build
-          CI=false npm run build
+          DISABLE_ESLINT_PLUGIN=true npm run build         
 
 
       - name: Install Capacitor iOS
