@@ -46,7 +46,9 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_IDENTITY="" \
             PROVISIONING_PROFILE_SPECIFIER="" \
-            DEVELOPMENT_TEAM=""
+            DEVELOPMENT_TEAM="" \
+            -quiet \
+            -disableParallelization
 
       - name: Create exportOptions.plist
         run: |
@@ -63,17 +65,26 @@ jobs:
           echo '</dict>' >> ios/App/exportOptions.plist
           echo '</plist>' >> ios/App/exportOptions.plist
 
-      - name: Export the IPA (unsigned)
+      - name: Export the IPA (unsigned) with Retry on Failure
         run: |
-          xcodebuild -exportArchive \
-            -archivePath ./build/App.xcarchive \
-            -exportPath ./build \
-            -exportOptionsPlist ios/App/exportOptions.plist
+          for i in {1..3}; do
+            xcodebuild -exportArchive \
+              -archivePath ./build/App.xcarchive \
+              -exportPath ./build \
+              -exportOptionsPlist ios/App/exportOptions.plist \
+              -quiet \
+              -disableParallelization \
+            && break || sleep 10;
+          done
 
       - name: Upload IPA to Appetize.io
         run: |
           curl https://api.appetize.io/v1/apps \
           -F "file=@./build/App.ipa" \
+          -F "platform=ios" \
+          -F "token=$APPETIZE_API_TOKEN" \
+          -F "note=BlackApp iOS Build"
+
           -F "platform=ios" \
           -F "token=$APPETIZE_API_TOKEN" \
           -F "note=BlackApp iOS Build"
