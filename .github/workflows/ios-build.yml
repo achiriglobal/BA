@@ -66,3 +66,4 @@ jobs:
           -F "note=BlackApp iOS Build"
         env:
           APPETIZE_API_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
+
