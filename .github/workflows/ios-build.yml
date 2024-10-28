@@ -32,29 +32,50 @@ jobs:
       - name: Install Capacitor iOS
         run: npx cap sync ios
 
-      - name: Clean Xcode Build
+      - name: Clean Build Directory
         run: |
-          xcodebuild clean -workspace ios/App/App.xcworkspace -scheme App -configuration Release
+          rm -rf ./build
 
-      - name: Build iOS App Archive
+      - name: Archive the iOS app (without signing)
         run: |
           xcodebuild archive \
-          -workspace ios/App/App.xcworkspace \
-          -scheme App \
-          -configuration Release \
-          -archivePath ./build/App.xcarchive \
-          CODE_SIGNING_ALLOWED=NO \
-          CODE_SIGN_IDENTITY="" \
-          PROVISIONING_PROFILE_SPECIFIER="Automatic" \
-          DEVELOPMENT_TEAM="XXXXXXXXXX"  # Replace "YOUR_TEAM_ID" with your actual team ID
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -archivePath ./build/App.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_IDENTITY="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            DEVELOPMENT_TEAM="" \
+            -quiet \
+            -disableParallelization
 
-      - name: Export IPA
+      - name: Create exportOptions.plist
         run: |
-          xcodebuild -exportArchive \
-          -archivePath ./build/App.xcarchive \
-          -exportPath ./build \
-          -exportOptionsPlist ios/App/exportOptions.plist \
-          CODE_SIGNING_ALLOWED=NO
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > ios/App/exportOptions.plist
+          echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> ios/App/exportOptions.plist
+          echo '<plist version="1.0">' >> ios/App/exportOptions.plist
+          echo '<dict>' >> ios/App/exportOptions.plist
+          echo '  <key>method</key>' >> ios/App/exportOptions.plist
+          echo '  <string>release-testing</string>' >> ios/App/exportOptions.plist
+          echo '  <key>signingStyle</key>' >> ios/App/exportOptions.plist
+          echo '  <string>manual</string>' >> ios/App/exportOptions.plist
+          echo '  <key>teamID</key>' >> ios/App/exportOptions.plist
+          echo '  <string>XXXXXXXXXX</string>' >> ios/App/exportOptions.plist
+          echo '</dict>' >> ios/App/exportOptions.plist
+          echo '</plist>' >> ios/App/exportOptions.plist
+
+      - name: Export the IPA (unsigned) with Retry on Failure
+        run: |
+          for i in {1..3}; do
+            xcodebuild -exportArchive \
+              -archivePath ./build/App.xcarchive \
+              -exportPath ./build \
+              -exportOptionsPlist ios/App/exportOptions.plist \
+              -quiet \
+              -disableParallelization \
+            && break || sleep 10;
+          done
 
       - name: Upload IPA to Appetize.io
         run: |
