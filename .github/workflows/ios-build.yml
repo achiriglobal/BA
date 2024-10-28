@@ -45,7 +45,8 @@ jobs:
           -archivePath ./build/App.xcarchive \
           CODE_SIGNING_ALLOWED=NO \
           CODE_SIGN_IDENTITY="" \
-          PROVISIONING_PROFILE_SPECIFIER="Automatic"
+          PROVISIONING_PROFILE_SPECIFIER="Automatic" \
+          DEVELOPMENT_TEAM="XXXXXX"  # Replace "YOUR_TEAM_ID" with your actual team ID
 
       - name: Export IPA
         run: |
@@ -62,4 +63,3 @@ jobs:
           -F "platform=ios" \
           -F "token=$APPETIZE_API_TOKEN" \
           -F "note=BlackApp iOS Build"
-
