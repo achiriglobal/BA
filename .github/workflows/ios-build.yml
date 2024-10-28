@@ -42,6 +42,7 @@ jobs:
           CODE_SIGNING_ALLOWED=NO \
           CODE_SIGNING_IDENTITY="" \
           PROVISIONING_PROFILE_SPECIFIER="" \
+          DEVELOPMENT_TEAM="" \
           -quiet
 
       - name: Export IPA
@@ -66,4 +67,3 @@ jobs:
           -F "note=BlackApp iOS Build"
         env:
           APPETIZE_API_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
-
