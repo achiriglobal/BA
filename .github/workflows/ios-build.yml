@@ -27,7 +27,7 @@ jobs:
       - name: Build App
         run: |
           export NODE_OPTIONS=--openssl-legacy-provider
-          npm run build
+          CI=false npm run build
 
 
       - name: Install Capacitor iOS
