@@ -47,8 +47,7 @@ jobs:
             CODE_SIGNING_IDENTITY="" \
             PROVISIONING_PROFILE_SPECIFIER="" \
             DEVELOPMENT_TEAM="" \
-            -quiet \
-            -disableParallelization
+            -quiet
 
       - name: Create exportOptions.plist
         run: |
