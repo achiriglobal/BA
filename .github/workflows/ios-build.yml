@@ -64,17 +64,7 @@ jobs:
           echo '</dict>' >> ios/App/exportOptions.plist
           echo '</plist>' >> ios/App/exportOptions.plist
 
-      - name: Export the IPA (unsigned) with Retry on Failure
-        run: |
-          for i in {1..3}; do
-            xcodebuild -exportArchive \
-              -archivePath ./build/App.xcarchive \
-              -exportPath ./build \
-              -exportOptionsPlist ios/App/exportOptions.plist \
-              -quiet \
-              -disableParallelization \
-            && break || sleep 10;
-          done
+        continue-on-error: false  # Stop if the archive fails
 
       - name: Check if IPA Exists
         run: |
