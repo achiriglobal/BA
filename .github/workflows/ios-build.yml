@@ -76,6 +76,13 @@ jobs:
             && break || sleep 10;
           done
 
+      - name: Check if IPA Exists
+        run: |
+          if [ ! -f "./build/App.ipa" ]; then
+            echo "IPA file not found!";
+            exit 1;
+          fi
+
       - name: Upload IPA to Appetize.io
         run: |
           curl https://api.appetize.io/v1/apps \
