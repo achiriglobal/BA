@@ -32,11 +32,11 @@ jobs:
       - name: Install Capacitor iOS
         run: npx cap sync ios
 
-      - name: Clean Build Directory
+      - name: Clean Xcode Build
         run: |
-          rm -rf ./build
+          xcodebuild clean -workspace ios/App/App.xcworkspace -scheme App -configuration Release
 
-      - name: Archive the iOS app (without signing)
+      - name: Build iOS App Archive
         run: |
           xcodebuild archive \
           -workspace ios/App/App.xcworkspace \
@@ -44,28 +44,27 @@ jobs:
           -configuration Release \
           -archivePath ./build/App.xcarchive \
           CODE_SIGNING_ALLOWED=NO \
-          CODE_SIGNING_IDENTITY="" \
-          PROVISIONING_PROFILE_SPECIFIER="" \
-          DEVELOPMENT_TEAM="" \
-       
+          CODE_SIGN_IDENTITY="" \
+          PROVISIONING_PROFILE_SPECIFIER="Automatic" \
+          DEVELOPMENT_TEAM="YOUR_TEAM_ID"  # Replace with actual team ID
         continue-on-error: false  # Stop if the archive fails
-       
-      - name: Create exportOptions.plist
-        run: |
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > ios/App/exportOptions.plist
-          echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> ios/App/exportOptions.plist
-          echo '<plist version="1.0">' >> ios/App/exportOptions.plist
-          echo '<dict>' >> ios/App/exportOptions.plist
-          echo '  <key>method</key>' >> ios/App/exportOptions.plist
-          echo '  <string>release-testing</string>' >> ios/App/exportOptions.plist
-          echo '  <key>signingStyle</key>' >> ios/App/exportOptions.plist
-          echo '  <string>manual</string>' >> ios/App/exportOptions.plist
-          echo '  <key>teamID</key>' >> ios/App/exportOptions.plist
-          echo '  <string>XXXXXXXXXX</string>' >> ios/App/exportOptions.plist
-          echo '</dict>' >> ios/App/exportOptions.plist
-          echo '</plist>' >> ios/App/exportOptions.plist
 
-        continue-on-error: false  # Stop if the archive fails
+      - name: Check Archive Existence
+        run: |
+          if [ ! -d "./build/App.xcarchive" ]; then
+            echo "Archive not created!";
+            exit 1;
+          fi
+
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+          -archivePath ./build/App.xcarchive \
+          -exportPath ./build \
+          -exportOptionsPlist ios/App/exportOptions.plist \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGN_IDENTITY=""
+        continue-on-error: false  # Stop if the export fails
 
       - name: Check if IPA Exists
         run: |
