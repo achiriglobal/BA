@@ -47,8 +47,9 @@ jobs:
           CODE_SIGNING_IDENTITY="" \
           PROVISIONING_PROFILE_SPECIFIER="" \
           DEVELOPMENT_TEAM="" \
-          -quiet
-
+       
+        continue-on-error: false  # Stop if the archive fails
+       
       - name: Create exportOptions.plist
         run: |
           echo '<?xml version="1.0" encoding="UTF-8"?>' > ios/App/exportOptions.plist
